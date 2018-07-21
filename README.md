@@ -33,6 +33,8 @@ Documentation can be found at [https://hexdocs.pm/bucketier](https://hexdocs.pm/
 
 ## Examples
 
+### Put some items in a shopping list and retreive the bucket by name
+
 ```elixir
     alias Bucketier.Bucket
     
@@ -43,15 +45,37 @@ Documentation can be found at [https://hexdocs.pm/bucketier](https://hexdocs.pm/
     |> Bucket.commit
 
     Bucket.bucket("shopping list")
-    %Bucketier.Bucket{ 
-      data: %{ 1 => "Milk", 2 => "Butter", 3 => "Bread"}, 
-      name: "shopping list"
-    }
+    #=> %Bucketier.Bucket{ 
+    #=>  data: %{ 1 => "Milk", 2 => "Butter", 3 => "Bread"}, 
+    #=>  name: "shopping list"
+    #=> }
 ```
 
 `Bucket.bucket("bucket name")` will return a struct of type `%Bucket{}`.
 `Bucket.put` will add keys to this structure but will not save the new
 state to the `Bucketier` until you call `Bucket.commit(mybucket)`.
+
+### Put some items in a list and retreive values by keys later
+
+```elixir
+    alias Bucketier.Bucket
+    
+    Bucket.bucket("shopping list")
+    |> Bucket.put( 1, "Milk")
+    |> Bucket.put( 2, "Butter")
+    |> Bucket.put( 3, "Bread")
+    |> Bucket.commit
+
+    Bucket.get("shopping list", 2)
+    #=> "Butter"
+
+    Bucket.keys("shopping list")
+    #=> [1,2,3]
+
+    Bucket.values("shopping list")
+    #=> ["Milk, "Butter", "Bread"]
+```
+
 
 ## Roadmap
 
