@@ -12,7 +12,7 @@ defmodule Bucketier.MixProject do
       package: package(),
       deps: deps(),
       docs: [
-        main: "README",
+        main: "reamde",
         logo: "assets/bucketier.png",
         extras: ["README.md"]
       ]
@@ -36,7 +36,8 @@ defmodule Bucketier.MixProject do
   def package() do
     [
       name: "bucketier",
-      files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
+      maintainers: ["andreas@altendorfer.at"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/iboard/bucketier"}
     ]
