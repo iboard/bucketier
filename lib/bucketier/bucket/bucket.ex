@@ -134,15 +134,81 @@ defmodule Bucketier.Bucket do
       {:error, :key_not_found}
   """
   def get( bucket_name, key ) do
+    with_bucket( bucket_name, fn(pid) -> get_key(pid, key) end)
+  end
+
+  @doc ~S"""
+  Get all values from a bucket.
+
+  ### Example:
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, "One" )
+      iex> |> Bucketier.Bucket.put( 2, "Two" )
+      iex> |> Bucketier.Bucket.put( 3, "Three" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.values("my list")
+      ["One", "Two", "Three"]
+
+      iex> Bucketier.Bucket.values("not here")
+      {:error, :bucket_not_found}
+
+      iex> Bucketier.Bucket.bucket("empty list")
+      iex> Bucketier.Bucket.values("empty list")
+      []
+
+  """
+  def values(bucket_name) do
+    with_bucket( bucket_name, fn(pid) -> get_values(pid) end)
+  end
+
+  @doc ~S"""
+  Get all keys in a bucket.
+
+  ### Example:
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, "One" )
+      iex> |> Bucketier.Bucket.put( 2, "Two" )
+      iex> |> Bucketier.Bucket.put( 3, "Three" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.keys("my list")
+      [1,2,3]
+
+      iex> Bucketier.Bucket.keys("not here")
+      {:error, :bucket_not_found}
+
+      iex> Bucketier.Bucket.bucket("empty list")
+      iex> Bucketier.Bucket.values("empty list")
+      []
+
+  """
+  def keys(bucket_name) do
+    with_bucket( bucket_name, fn(pid) -> get_keys(pid) end)
+  end
+
+  defp with_bucket( bucket_name, fun ) do
     case Registry.lookup(Bucketier.Registry, bucket_name) do
       [] -> {:error, :bucket_not_found}
-      [{pid,_}] -> get_key(pid, key)
+      [{pid,_}] -> fun.(pid)
     end
   end
 
   defp get_key(pid, key) do
     Agent.get(pid, fn(bucket) ->
       Map.get( bucket.data, key, {:error, :key_not_found} )
+    end)
+  end
+
+  defp get_values(pid) do
+    Agent.get(pid, fn(bucket) ->
+      Map.values( bucket.data )
+    end)
+  end
+
+  defp get_keys(pid) do
+    Agent.get(pid, fn(bucket) ->
+      Map.keys( bucket.data )
     end)
   end
 
@@ -153,8 +219,16 @@ defmodule Bucketier.Bucket do
   def drop_all! do
     Supervisor.which_children(Bucketier.BucketSupervisor)
     |> Enum.each( fn {_,pid,_,_}  -> Agent.stop(pid) end)
+    wait_all_dropped(Bucketier.BucketSupervisor)
   end
 
+  defp wait_all_dropped(supervisor), do: wait_all_dropped(1, supervisor)
+  defp wait_all_dropped(0, _supervisor), do: 0
+  defp wait_all_dropped(_count, supervisor) do
+    Supervisor.which_children(supervisor) 
+    |> Enum.count
+    |> wait_all_dropped(supervisor)
+  end
 
   ## Helpers
   
