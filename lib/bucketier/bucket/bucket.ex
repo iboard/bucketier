@@ -104,6 +104,49 @@ defmodule Bucketier.Bucket do
   end
 
   @doc ~S"""
+  Get an entry back from the bucket.
+
+  ### Examples:
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, "One" )
+      iex> |> Bucketier.Bucket.put( 2, "Two" )
+      iex> |> Bucketier.Bucket.put( 3, "Three" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.get("my list", 2)
+      "Two"
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, "One" )
+      iex> |> Bucketier.Bucket.put( 2, "Two" )
+      iex> |> Bucketier.Bucket.put( 3, "Three" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.get("unknown bucket", :unknown_key)
+      {:error, :bucket_not_found}
+
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, "One" )
+      iex> |> Bucketier.Bucket.put( 2, "Two" )
+      iex> |> Bucketier.Bucket.put( 3, "Three" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.get("my list", :unknown_key)
+      {:error, :key_not_found}
+  """
+  def get( bucket_name, key ) do
+    case Registry.lookup(Bucketier.Registry, bucket_name) do
+      [] -> {:error, :bucket_not_found}
+      [{pid,_}] -> get_key(pid, key)
+    end
+  end
+
+  defp get_key(pid, key) do
+    Agent.get(pid, fn(bucket) ->
+      Map.get( bucket.data, key, {:error, :key_not_found} )
+    end)
+  end
+
+  @doc ~S"""
   Drops all buckets! This function is used mainly from tests but
   there maybe some use-cases where you want to get rid of all data.
   """
