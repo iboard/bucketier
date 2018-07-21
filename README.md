@@ -8,9 +8,9 @@ See `Bucketier.Bucket` for more information.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bucketier` to your list of dependencies in `mix.exs` and optionally
-start it with your application:
+Bucketier is [available as hex package](https://hex.pm/packages/bucketier), 
+the package can be installed by adding `bucketier` to your list of dependencies 
+in `mix.exs` and optionally start it with your application:
 
 ```elixir
 def application do
