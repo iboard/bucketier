@@ -9,17 +9,57 @@ See `Bucketier.Bucket` for more information.
 ## Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bucketier` to your list of dependencies in `mix.exs`:
+by adding `bucketier` to your list of dependencies in `mix.exs` and optionally
+start it with your application:
 
 ```elixir
+def application do
+  [
+    applications: [:bucketier],     ### add :bucketier here
+    extra_applications: [:logger],
+    mod: {YourElixirApp.Application, []}
+  ]
+end
+
 def deps do
   [
     {:bucketier, "~> 0.1.0"}
   ]
 end
+
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/bucketier](https://hexdocs.pm/bucketier).
+Documentation can be found at [https://hexdocs.pm/bucketier](https://hexdocs.pm/bucketier).
+
+## Examples
+
+```elixir
+    alias Bucketier.Bucket
+    
+    Bucket.bucket("shopping list")
+    |> Bucket.put( 1, "Milk")
+    |> Bucket.put( 2, "Butter")
+    |> Bucket.put( 3, "Bread")
+    |> Bucket.commit
+
+    Bucket.bucket("shopping list")
+    %Bucketier.Bucket{ 
+      data: %{ 1 => "Milk", 2 => "Butter", 3 => "Bread"}, 
+      name: "shopping list"
+    }
+```
+
+`Bucket.bucket("bucket name")` will return a struct of type `%Bucket{}`.
+`Bucket.put` will add keys to this structure but will not save the new
+state to the `Bucketier` until you call `Bucket.commit(mybucket)`.
+
+## Roadmap
+
+The project is a sidekick from a project at our company and will hopefully
+mature over the next weeks.
+
+Obviously, updating and deleting of entries, real persistence (on disc),
+and other features are missing and will follow.
+
+    
 

@@ -14,7 +14,7 @@ defmodule Bucketier.MixProject do
       docs: [
         main: "readme",
         logo: "assets/bucketier.png",
-        extras: ["readme.md"]
+        extras: ["README.md", "CHANGELOG.md"]
       ]
     ]
   end
