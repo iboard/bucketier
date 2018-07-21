@@ -1,4 +1,4 @@
-# Bucketier
+# Bucketier README
 
 **Bucketier** is a simple _Dictionary_ application you can use to store
 data in a simple _Bucket_ (Key/Value store).

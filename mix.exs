@@ -36,10 +36,13 @@ defmodule Bucketier.MixProject do
   def package() do
     [
       name: "bucketier",
-      files: ["lib", "mix.exs", "readme*", "LICENSE*"],
+      files: ["lib", "mix.exs", "README*", "LICENSE*"],
       maintainers: ["andreas@altendorfer.at"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/iboard/bucketier"}
+      links: %{
+               "GitHub" => "https://github.com/iboard/bucketier"
+               "Documentation" => "https://hexdocs.pm/bucketier/readme.html"
+              }
     ]
   end
 
