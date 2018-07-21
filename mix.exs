@@ -40,9 +40,9 @@ defmodule Bucketier.MixProject do
       maintainers: ["andreas@altendorfer.at"],
       licenses: ["MIT"],
       links: %{
-               "GitHub" => "https://github.com/iboard/bucketier"
-               "Documentation" => "https://hexdocs.pm/bucketier/readme.html"
-              }
+        "GitHub" => "https://github.com/iboard/bucketier",
+        "Documentation" => "https://hexdocs.pm/bucketier/readme.html"
+      }
     ]
   end
 
