@@ -1,4 +1,5 @@
 defmodule Bucketier.Bucket do
+  require Logger
   @moduledoc ~S"""
   The _Bucket_ is an `Agent` holding the state of a `Map` as its content.
   Buckets are started automatically if not found in the `Registry`.
@@ -79,6 +80,19 @@ defmodule Bucketier.Bucket do
       iex> |> Bucketier.Bucket.put( :some_key, "some value" )
       %Bucketier.Bucket{ name: "B1", data: %{ some_key: "some value" } }
 
+      iex> %Bucketier.Bucket{ name: "B1", data: %{} }
+      iex> |> Bucketier.Bucket.put( :some_key, "some value" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.bucket("B1")
+      iex> |> Bucketier.Bucket.put( :some_key, "some updated value" )
+      iex> |> Bucketier.Bucket.commit
+      iex> Bucketier.Bucket.bucket("B1")
+      %Bucketier.Bucket{
+              data: %{some_key: "some updated value"},
+              name: "B1"
+            }
+
+
   """
   def put( bucket, key, value ) do
     bucket
@@ -138,6 +152,35 @@ defmodule Bucketier.Bucket do
   end
 
   @doc ~S"""
+  Update data set of a given entity
+
+  ### Example:
+
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.put( 1, %{ value: "one"} )
+      iex> |> Bucketier.Bucket.commit()
+      iex> Bucketier.Bucket.bucket("my list")
+      iex> |> Bucketier.Bucket.update( 1, :additional_value, "one.one" )
+      iex> |> Bucketier.Bucket.commit()
+      iex> Bucketier.Bucket.bucket("my list")
+      %Bucketier.Bucket{
+        data: %{1 => %{additional_value: "one.one", value: "one"}},
+        name: "my list"
+      }
+
+  """
+  def update(bucket, uuid, field, data) do
+    bucket
+    |> Map.merge( %{ data: update_entity( bucket.data, uuid, field, data) } )
+  end
+  
+  defp update_entity( bucket_data, uuid, field, data ) do
+    new_state = bucket_data[uuid] |> Map.merge( %{ field => data } )
+    Map.merge( bucket_data,  %{ uuid => new_state } )
+  end
+
+
+  @doc ~S"""
   Get all values from a bucket.
 
   ### Example:
@@ -186,6 +229,7 @@ defmodule Bucketier.Bucket do
   def keys(bucket_name) do
     with_bucket( bucket_name, fn(pid) -> get_keys(pid) end)
   end
+
 
   defp with_bucket( bucket_name, fun ) do
     case Registry.lookup(Bucketier.Registry, bucket_name) do
