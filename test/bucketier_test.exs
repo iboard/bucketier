@@ -3,9 +3,8 @@ defmodule BucketierTest do
   doctest Bucketier.Bucket
   alias Bucketier.{Bucket}
 
-
   setup _ do
-    Bucket.drop_all!
+    Bucket.drop_all!()
     :ok
   end
 
@@ -21,6 +20,17 @@ defmodule BucketierTest do
       |> Bucket.put(2, "Bread")
 
     assert %Bucket{name: "shopping list", data: %{1 => "Milk", 2 => "Bread"}} == bucket
+  end
+
+  test "find somthing in a bucket by key" do
+    bucket =
+      Bucket.bucket("shopping list")
+      |> Bucket.put(1, "Milk")
+      |> Bucket.put(2, "Bread")
+      |> Bucket.commit
+
+    assert "Milk" == Bucket.get("shopping list", 1)
+    assert "Bread" == Bucket.get("shopping list", 2)
   end
 
   test "bucket persists data on commit" do
