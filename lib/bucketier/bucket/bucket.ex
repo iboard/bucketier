@@ -55,7 +55,7 @@ defmodule Bucketier.Bucket do
       iex> Bucketier.Bucket.bucket(pid)
       { :error, :bucket_not_alive }
   """
-  @spec bucket( String.t | pid() ) :: Bucketier.Bucket.t()
+  @spec bucket( String.t | pid() ) :: any
   def bucket(pid_or_name) when is_pid(pid_or_name) do
     case Process.alive?(pid_or_name) do
       true -> Agent.get(pid_or_name, fn(state) -> state end)
@@ -97,6 +97,26 @@ defmodule Bucketier.Bucket do
   def put( bucket, key, value ) do
     bucket
     |> Map.merge( %{ data: Map.merge(bucket.data, %{ key => value }) } )
+  end
+
+  @doc ~S"""
+  Drop an entry from a bucket's data-struct. 
+
+  *Note*: This updates the struct im memory only. No Bucket on the server
+  will actually be uptdated! If you want your changes to be persistent,
+  please see: `commit/1`.
+
+  ### Example:
+
+      iex> %Bucketier.Bucket{ name: "B1", data: %{ s1: "One", s2: "Two"} }
+      iex> |> Bucketier.Bucket.drop!(:s1)
+      %Bucketier.Bucket{data: %{s2: "Two"}, name: "B1"}
+
+  """
+  @spec drop!(any, Engine.Types.uuid() ) :: any
+  def drop!(bucket, key) do
+    bucket
+    |> Map.merge(%{data: Map.delete( bucket.data, key) })
   end
 
   @doc ~S"""
