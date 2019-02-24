@@ -33,6 +33,10 @@ Documentation can be found at [https://hexdocs.pm/bucketier](https://hexdocs.pm/
 
 ## Examples
 
+The best way to figure out how you can use this library is by having a look at 
+this [Test suite](https://github.com/iboard/hexpack-examples/blob/master/test/hexpack_examples_test.exs).
+
+
 ### Put some items in a shopping list and retreive the bucket by name
 
 ```elixir
