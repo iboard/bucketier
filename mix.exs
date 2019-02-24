@@ -4,7 +4,7 @@ defmodule Bucketier.MixProject do
   def project do
     [
       app: :bucketier,
-      version: "0.1.2",
+      version: "0.1.3",
       elixir: "~> 1.7",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -29,7 +29,7 @@ defmodule Bucketier.MixProject do
 
   def description,
     do: ~S"""
-      **Bucketier** is a simple _Dictionary_ application you can use to store
+      Bucketier is a simple dictionary application you can use to store
       data in a simple _Bucket_ (Key/Value store).
     """
 
