@@ -26,7 +26,7 @@ end
 
 def deps do
   [
-    {:bucketier, "~> 0.1.0"}
+    {:bucketier, "~> 0.1"}
   ]
 end
 
