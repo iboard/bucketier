@@ -1,6 +1,7 @@
 # Bucketier README
 
 [![Documentation](https://img.shields.io/badge/docs-hexpm-blue.svg)](http://hexdocs.pm/bucketier/)
+[![Documentation](https://travis-ci.com/iboard/bucketier.svg?branch=master)](https://travis-ci.com/iboard/bucketier)
 
 **Bucketier** is a simple _Dictionary_ application you can use to store
 data in a simple _Bucket_ (Key/Value store).
